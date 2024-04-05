@@ -1,10 +1,10 @@
-import { hash, compare } from "bcrypt";
-import jwt from "jsonwebtoken";
+const { hash, compare } = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 import UserModel from "../../models/user.js";
 
 const UserRegister = async (req, res) => {
-  const {name, adhar, gender, address, phone} = req.body;
+  const { name, adhar, gender, address, phone } = req.body;
 };
 
 const UserLogin = async (req, res) => {
@@ -21,5 +21,4 @@ const UserLogin = async (req, res) => {
     .json({ status: "Success", message: "Login successful", token: token });
 };
 
-
-export {UserRegister, UserLogin};
+module.exports = { UserRegister, UserLogin };

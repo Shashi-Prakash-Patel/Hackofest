@@ -1,5 +1,5 @@
-import { hash, compare } from "bcrypt";
-import UserModel from "../models/user.js";
+const { hash, compare } = require('bcrypt');
+const UserModel = require("../models/user.js"); 
 
 /** User Register Middleware **/
 const UserRegisterFieldData = async (req, res, next) => {
@@ -32,4 +32,4 @@ const UserLoginFieldData = async (req, res, next) => {
   }
 };
 
-export { UserRegisterFieldData, UserLoginFieldData };
+module.exports = { UserRegisterFieldData, UserLoginFieldData };

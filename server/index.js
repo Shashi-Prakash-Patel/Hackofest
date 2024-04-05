@@ -1,6 +1,8 @@
-import 'dotenv/config';
-import app from "./app.js";
-import Connection from './Connection.js';
+require('dotenv').config();
+
+const app = require('./app.js');
+const Connection = require('./Connection.js');
+
 
 const port = process.env.PORT;
 

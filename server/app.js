@@ -1,8 +1,8 @@
-import express from "express";
-import cookieParser from "cookie-parser";
-import bodyParser from "body-parser";
-import cors from "cors";
-import path from "path";
+const express = require('express');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const path = require('path');
 
 const app = express();
 
@@ -23,4 +23,4 @@ app.get("/", async (req, res) => {
   res.status(200).json({ message: "LATEST NEWS" });
 });
 
-export default app;
+module.exports = app;
