@@ -1,17 +1,33 @@
-const { hash, compare } = require('bcrypt');
-const UserModel = require("../models/user.js"); 
+const { compare } = require("bcrypt");
+const UserModel = require("../models/user.js");
 
 /** User Register Middleware **/
 const UserRegisterFieldData = async (req, res, next) => {
-  const { name, adhar, gender, address, phone } = req.body;
+  const { name, aadhar, gender, address, phone, password } = req.body;
+
+  if (name && aadhar && gender && address && phone && password && req.file) {
+    const UserData = await UserModel.findOne({ aadhar: aadhar });
+    if (!UserData) {
+      next();
+    } else {
+      res.status(400).json({
+        status: "failed",
+        message: "Your adhar number is already register",
+      });
+    }
+  } else {
+    res
+      .status(400)
+      .json({ status: "failed", message: "All field are required" });
+  }
 };
 
 /** User Login Middleware **/
 const UserLoginFieldData = async (req, res, next) => {
-  const { adhar, password } = req.body;
+  const { aadhar, password } = req.body;
 
-  if (adhar && password) {
-    const userData = await UserModel.findOne({ adhar: adhar });
+  if (aadhar && password) {
+    const userData = await UserModel.findOne({ aadhar: aadhar });
 
     if (userData) {
       const isMatch = await compare(password, userData.password);
@@ -19,15 +35,18 @@ const UserLoginFieldData = async (req, res, next) => {
         next();
       } else {
         res
-          .status(201)
-          .json({ status: "failed", message: "Your password is wrong" });
+          .status(400)
+          .json({
+            status: "failed",
+            message: "Your password or aadhar number is wrong",
+          });
       }
     } else {
-      res.status(201).json({ status: "failed", message: "Please register" });
+      res.status(400).json({ status: "failed", message: "Please register" });
     }
   } else {
     res
-      .status(201)
+      .status(400)
       .json({ status: "failed", message: "All field are required" });
   }
 };

@@ -1,5 +1,4 @@
-import multer from "multer";
-import { Path } from "mongoose";
+const multer = require('multer');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -12,4 +11,4 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-export default upload;
+module.exports = upload;
