@@ -6,7 +6,8 @@ const uploads = require("./uploads");
 const {
   UserRegisterFieldData,
   UserLoginFieldData,
-} = require("../middlewares/user");
+} = require("../middlewares/users/user");
+
 
 /** Controller **/
 const { UserRegister, UserLogin } = require("../controllers/users/user");

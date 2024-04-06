@@ -1,12 +1,15 @@
 const { compare } = require("bcrypt");
-const UserModel = require("../models/user.js");
+const jwt = require("jsonwebtoken");
+
+const RegisterUserModel = require("../models/register");
+const UserLoginModel = require("../models/login");
 
 /** User Register Middleware **/
 const UserRegisterFieldData = async (req, res, next) => {
   const { name, aadhar, gender, address, phone, password } = req.body;
 
   if (name && aadhar && gender && address && phone && password && req.file) {
-    const UserData = await UserModel.findOne({ aadhar: aadhar });
+    const UserData = await RegisterUserModel.findOne({ aadhar: aadhar });
     if (!UserData) {
       next();
     } else {
@@ -24,25 +27,40 @@ const UserRegisterFieldData = async (req, res, next) => {
 
 /** User Login Middleware **/
 const UserLoginFieldData = async (req, res, next) => {
-  const { aadhar, password } = req.body;
+  const { name, phone, password } = req.body;
 
-  if (aadhar && password) {
-    const userData = await UserModel.findOne({ aadhar: aadhar });
+  if (name && phone && password) {
+    const userData = await UserLoginModel.findOne({ phone: phone });
 
     if (userData) {
-      const isMatch = await compare(password, userData.password);
+      const isMatch = compare(password, userData.password);
       if (isMatch) {
-        next();
-      } else {
+        userData.password = null;
+
+        const token = jwt.sign(
+          { _id: userData._id, phone: userData.phone },
+          process.env.SECRET
+        );
+
         res
-          .status(400)
+          .status(200)
+          .cookie("user", token, {
+            expires: new Date(Date.now() + 900000000000000),
+          })
           .json({
-            status: "failed",
-            message: "Your password or aadhar number is wrong",
+            status: "Success",
+            message: "Login successful",
+            Usertoken: token,
+            user: userData,
           });
+      } else {
+        res.status(400).json({
+          status: "failed",
+          message: "Your password or aadhar number is wrong",
+        });
       }
     } else {
-      res.status(400).json({ status: "failed", message: "Please register" });
+      next();
     }
   } else {
     res
@@ -50,5 +68,11 @@ const UserLoginFieldData = async (req, res, next) => {
       .json({ status: "failed", message: "All field are required" });
   }
 };
+
+
+/** News Uploaded Users **/
+const NewsUploadMiddleWare = (req, res, next)=>{
+  const newstoken = req.authentic.newstoken;
+}
 
 module.exports = { UserRegisterFieldData, UserLoginFieldData };
